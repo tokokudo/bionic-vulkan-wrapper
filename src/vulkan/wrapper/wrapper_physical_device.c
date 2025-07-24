@@ -12,6 +12,7 @@
 #include "wsi_common.h"
 #include "util/os_misc.h"
 #include "vk_printers.h"
+#include <fcntl.h>
 
 static VkResult
 wrapper_setup_device_extensions(struct wrapper_physical_device *pdevice) {
