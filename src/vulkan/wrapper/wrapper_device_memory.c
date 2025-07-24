@@ -14,6 +14,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <linux/dma-heap.h>
+#include <fcntl.h>
 
 static int
 safe_ioctl(int fd, unsigned long request, void *arg)
@@ -426,7 +427,7 @@ wrapper_MapMemory2KHR(VkDevice _device,
    assert(mem->dmabuf_fd >= 0 || mem->ahardware_buffer != NULL);
 
    if (mem->ahardware_buffer) {
-      const native_handle_t *handle;
+      const __native_handle_t *handle;
       const int *handle_fds;
 
       handle = AHardwareBuffer_getNativeHandle(mem->ahardware_buffer);
