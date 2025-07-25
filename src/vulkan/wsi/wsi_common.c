@@ -41,7 +41,7 @@
 
 #include <time.h>
 #include <stdlib.h>
-#ifndef __TERMUX__
+#ifndef __ANDROID__
 #include <bits/pthreadtypes.h>
 #endif
 #include <stdio.h>
@@ -50,7 +50,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef __TERMUX__
+#ifdef __ANDROID__
 #include <android/hardware_buffer.h>
 #endif
 
@@ -253,7 +253,7 @@ wsi_device_init(struct wsi_device *wsi,
    WSI_GET_CB(UnmapMemory);
    if (wsi->khr_present_wait)
       WSI_GET_CB(WaitSemaphores);
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    WSI_GET_CB(GetMemoryAndroidHardwareBufferANDROID);
    WSI_GET_CB(GetAndroidHardwareBufferPropertiesANDROID);
 #endif
@@ -413,7 +413,7 @@ get_blit_type(const struct wsi_device *wsi,
       return wsi_cpu_image_needs_buffer_blit(wsi, cpu_params) ?
          WSI_SWAPCHAIN_BUFFER_BLIT : WSI_SWAPCHAIN_NO_BLIT;
    }
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    case WSI_IMAGE_TYPE_AHB: {
       return wsi_get_ahardware_buffer_blit_type(wsi, params, device);
    }
@@ -451,7 +451,7 @@ configure_image(const struct wsi_swapchain *chain,
          container_of(params, const struct wsi_cpu_image_params, base);
       return wsi_configure_cpu_image(chain, pCreateInfo, cpu_params, info);
    }
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    case WSI_IMAGE_TYPE_AHB: {
       return wsi_configure_ahardware_buffer_image(chain, pCreateInfo, params, info);
    }
@@ -755,7 +755,7 @@ wsi_destroy_image_info(const struct wsi_swapchain *chain,
       vk_free(&chain->alloc, info->modifier_props);
       info->modifier_props = NULL;
    }
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    if (info->ahardware_buffer_desc != NULL) {
       vk_free(&chain->alloc, info->ahardware_buffer_desc);
       info->ahardware_buffer_desc = NULL;
@@ -825,7 +825,7 @@ wsi_destroy_image(const struct wsi_swapchain *chain,
 {
    const struct wsi_device *wsi = chain->wsi;
 
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    if (image->ahardware_buffer)
       AHardwareBuffer_release(image->ahardware_buffer);
 #endif
