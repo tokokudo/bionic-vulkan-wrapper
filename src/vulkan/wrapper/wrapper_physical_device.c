@@ -299,29 +299,35 @@ wrapper_GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice,
 
 VKAPI_ATTR void VKAPI_CALL
 wrapper_GetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice,
-                                   VkPhysicalDeviceFeatures2* pFeatures) {                                                              
+                                   VkPhysicalDeviceFeatures2* pFeatures) {
    vk_common_GetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
+
    // Fake select dxvk 1.10.3 mandatory features
    vk_foreach_struct(pnext, pFeatures->pNext) {
       switch (pnext->sType) {
          case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT:
          {
-            VkPhysicalDeviceTransformFeedbackFeaturesEXT *extTransformFeedback = (VkPhysicalDeviceTransformFeedbackFeaturesEXT*) pnext;
+            VkPhysicalDeviceTransformFeedbackFeaturesEXT *extTransformFeedback =
+                (VkPhysicalDeviceTransformFeedbackFeaturesEXT*) pnext;
             extTransformFeedback->transformFeedback = true;
             extTransformFeedback->geometryStreams = true;
             break;
          }
          case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT:
          {
-            VkPhysicalDeviceCustomBorderColorFeaturesEXT *extCustomBorderColor = (VkPhysicalDeviceCustomBorderColorFeaturesEXT*) pnext;
+            VkPhysicalDeviceCustomBorderColorFeaturesEXT *extCustomBorderColor =
+                (VkPhysicalDeviceCustomBorderColorFeaturesEXT*) pnext;
             extCustomBorderColor->customBorderColors = VK_TRUE;
             extCustomBorderColor->customBorderColorWithoutFormat = VK_TRUE;
             break;
          }
          case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT:
-            VkPhysicalDeviceHostQueryResetFeaturesEXT *extHostQueryReset = (VkPhysicalDeviceHostQueryResetFeaturesEXT*) pnext;
+         {
+            VkPhysicalDeviceHostQueryResetFeaturesEXT *extHostQueryReset =
+                (VkPhysicalDeviceHostQueryResetFeaturesEXT*) pnext;
             extHostQueryReset->hostQueryReset = VK_TRUE;
             break;
+         }
          default:
             break;
       }
