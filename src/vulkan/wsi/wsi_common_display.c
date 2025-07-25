@@ -176,7 +176,7 @@ struct wsi_display_sync {
 
 static uint64_t fence_sequence;
 
-#ifdef __TERMUX__
+#ifdef __ANDROID__
 static void thread_signal_handler (int signum) {
    pthread_exit (0);
 }
@@ -1348,7 +1348,7 @@ wsi_display_wait_thread(void *data)
       .events = POLLIN
    };
 
-#ifndef __TERMUX__
+#ifndef __ANDROID__
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif
    for (;;) {
@@ -1378,7 +1378,7 @@ wsi_display_start_wait_thread(struct wsi_display *wsi)
 static void
 wsi_display_stop_wait_thread(struct wsi_display *wsi)
 {
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    struct sigaction actions;
    memset (&actions, 0, sizeof (actions));
    sigemptyset (&actions.sa_mask);
@@ -1389,7 +1389,7 @@ wsi_display_stop_wait_thread(struct wsi_display *wsi)
 
    mtx_lock(&wsi->wait_mutex);
    if (wsi->wait_thread) {
-#ifndef __TERMUX__
+#ifndef __ANDROID__
       pthread_cancel(wsi->wait_thread);
 #else
       pthread_kill(wsi->wait_thread, SIGUSR2);
@@ -2237,7 +2237,7 @@ udev_event_listener_thread(void *data)
 
    int udev_fd = udev_monitor_get_fd(mon);
 
-#ifndef __TERMUX__
+#ifndef __ANDROID__
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif
 
@@ -2364,7 +2364,7 @@ wsi_display_finish_wsi(struct wsi_device *wsi_device,
    struct wsi_display *wsi =
       (struct wsi_display *) wsi_device->wsi[VK_ICD_WSI_PLATFORM_DISPLAY];
 
-#ifdef __TERMUX__
+#ifdef __ANDROID__
    struct sigaction actions;
    memset (&actions, 0, sizeof (actions));
    sigemptyset (&actions.sa_mask);
@@ -2384,7 +2384,7 @@ wsi_display_finish_wsi(struct wsi_device *wsi_device,
       wsi_display_stop_wait_thread(wsi);
 
       if (wsi->hotplug_thread) {
-#ifndef __TERMUX__
+#ifndef __ANDROID__
          pthread_cancel(wsi->hotplug_thread);
 #else
          pthread_kill(wsi->hotplug_thread, SIGUSR2);
